@@ -7,19 +7,26 @@ import { getPlaces } from './api';
 
 function App() {
   const [places, setPlaces] = useState([]);
-  const [coordinates, setCoordinates] = useState({
-    lat: 40, lng: 20
-  });
-  const [bounds, setBounds] = useState({
-    // "ne": {
-    //   "lat": 40.207334348487564,
-    //   "lng": 20.199594971121257
-    // },
-    // "sw": {
-    //   "lat": 39.64284867504031,
-    //   "lng": 19.243784424246257
-    // }
-  });
+  const [coordinates, setCoordinates] = useState(
+    //{}
+    {
+      "lat": 46.94930073486168,
+      "lng": 7.455610739553805
+    }
+  );
+  const [bounds, setBounds] = useState(
+    // null
+    {//static bounds for test
+      "ne": {
+        "lat": 46.960337896574146,
+        "lng": 7.451307207261493
+      },
+      "sw": {
+        "lat": 46.944636199294024,
+        "lng": 7.422639757310321
+      }
+    }
+  );
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState("restaurants");
@@ -32,26 +39,29 @@ function App() {
   // }, [])
 
   useEffect(() => {
-    const filteredPlaces = places.filter((place) => place.rating > rate)
-    setFilteredPlaces(filteredPlaces);
+    const filtered = places.filter((place) => place.rating > rate)
+    setFilteredPlaces(filtered);
   }, [rate])
 
 
   useEffect(() => {
-    setIsLoading(true)
-    getPlaces(type, bounds.sw, bounds.ne).then((data) => {
-      setPlaces(data);
-      setFilteredPlaces([])
-      setIsLoading(false);
-    })
-  }, [])
+    if (bounds) {
+      setIsLoading(true)
+      getPlaces(type, bounds.sw, bounds.ne).then((data) => {
+        setPlaces(data);
+        setFilteredPlaces([])
+        setIsLoading(false);
+      })
+    }
+  }, [type])
 
-
+  console.log(bounds)
+  console.log(coordinates)
   console.log(places)
   return (
     <div className="App">
       <CssBaseline />
-      <Header />
+      <Header setCoordinates={setCoordinates} />
       <Grid container spacing={3} style={{ width: '100%' }}>
         <Grid item xs={12} md={4}>
           <List
