@@ -1,5 +1,5 @@
 import axios from 'axios';
-export async function getPlaces(type, sw, ne) {
+export const getPlaces = async (type, sw, ne) => {
     try {
         const { data: { data } } = await axios.get(`https://travel-advisor.p.rapidapi.com/${type}/list-in-boundary`, {
             params: {
@@ -9,14 +9,30 @@ export async function getPlaces(type, sw, ne) {
                 tr_longitude: ne.lng,
             },
             headers: {
-                //'dbcdddfc73msh73e5f87412b7ac5p1e3db7jsn9ca9694b12f1'
-                'X-RapidAPI-Key': 'e5cd26a157msha528eceec3b8658p15b212jsn721ac0275b3c',
+                'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
                 'X-RapidAPI-Host': 'travel-advisor.p.rapidapi.com'
             }
         }
         );
         return data;
     } catch (error) {
+        console.log(error)
+    }
+}
+export const getWeather = async (lat, lon) => {
+    try {
+        const { data: { list } } = await axios.get('https://community-open-weather-map.p.rapidapi.com/find',
+            {
+                params: { lat, lon }
+                , headers: {
+                    'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+                    'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com'
+                }
+            }
+        )
+        return list;
+    }
+    catch (error) {
         console.log(error)
     }
 }

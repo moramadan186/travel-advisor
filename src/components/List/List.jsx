@@ -23,13 +23,6 @@ const List = ({
   const classes = useStyles();
   const [elRefs, setElRefs] = useState([]);
 
-  // useEffect(() => {
-  //   const refs = Array(places?.length).fill().map(
-  //     (_, i) => elRefs[i] || createRef()
-  //   );
-  //   setElRefs(refs);
-  // }, [places]);
-
   useEffect(() => {
     setElRefs((refs) =>
       Array(places?.length)
@@ -37,6 +30,7 @@ const List = ({
         .map((_, i) => refs[i] || createRef())
     );
   }, [places]);
+
   return isLoading ? (
     <div className={classes.loading}>
       <CircularProgress />

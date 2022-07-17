@@ -5,26 +5,31 @@ import { Paper, Typography, useMediaQuery } from "@material-ui/core";
 import useStyles from "./styles.js";
 import { LocationOn } from "@material-ui/icons";
 import { Rating } from "@material-ui/lab";
+import { mapStyle } from "./mapStyle";
 const Map = ({
   coordinates,
   setCoordinates,
   setBounds,
   places,
   setChildClicked,
+  weatherData,
 }) => {
   const classes = useStyles();
   const isDesktop = useMediaQuery("(min-width:600px)");
 
-  //"AIzaSyCBLPGhRPVMHvdLF9_3TP14hAuDJdIPLJ8"
   return (
     <div className={classes.mapContainer}>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: "AIzaSyCBLPGhRPVMHvdLF9_3TP14hAuDJdIPLJ8" }}
+        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY }}
         defaultCenter={coordinates}
         center={coordinates}
         defaultZoom={13}
         margin={[50, 50, 50, 50]}
-        // options={""}
+        options={{
+          disableDefaultUI: true,
+          zoomControl: true,
+          styles: mapStyle,
+        }}
         onChange={(e) => {
           setCoordinates({ lat: e.center.lat, lng: e.center.lng });
           setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
@@ -34,7 +39,7 @@ const Map = ({
         }}
       >
         {places?.map((place, i) => (
-          <div
+          <Marker
             className={classes.markerContainer}
             lat={Number(place.latitude)}
             lng={Number(place.longitude)}
@@ -68,11 +73,26 @@ const Map = ({
                 />
               </Paper>
             )}
-          </div>
+          </Marker>
+        ))}
+        {weatherData?.map((weather, i) => (
+          <Marker
+            key={i}
+            lat={Number(weather.coord.lat)}
+            lng={Number(weather.coord.lon)}
+          >
+            <img
+              height={80}
+              src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
+              alt="weather"
+            />
+          </Marker>
         ))}
       </GoogleMapReact>
     </div>
   );
 };
-
+const Marker = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
 export default Map;
